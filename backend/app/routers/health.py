@@ -14,11 +14,3 @@ def health_check():
         "service": "ImagineRead Lite"
     }
 
-
-@router.get("/")
-def root():
-    """Root endpoint."""
-    return {
-        "message": "Welcome to ImagineRead Lite API",
-        "docs": "/docs"
-    }
