@@ -14,7 +14,7 @@ interface FileUploaderProps {
 }
 
 const ALLOWED_EXTENSIONS = ['pdf', 'cbz', 'cbr', 'epub']
-const MAX_FILE_SIZE = 30 * 1024 * 1024 // 30MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
 
 export function FileUploader({ onUploadComplete }: FileUploaderProps) {
     const [isDragging, setIsDragging] = useState(false)
@@ -31,7 +31,7 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
         }
 
         if (file.size > MAX_FILE_SIZE) {
-            return `Arquivo muito grande. Máximo: 10MB`
+            return `Arquivo muito grande. Máximo: 50MB`
         }
 
         return null
@@ -149,6 +149,10 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
                         <span key={ext} className="format-badge">{ext}</span>
                     ))}
                 </div>
+
+                <p className="upload-size-info">
+                    Suporta arquivos até 50MB
+                </p>
             </div>
 
             {isUploading && (

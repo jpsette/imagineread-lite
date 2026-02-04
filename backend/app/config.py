@@ -17,7 +17,7 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 
 # App Config
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
-FREE_FILE_SIZE_LIMIT_MB = int(os.getenv("FREE_FILE_SIZE_LIMIT_MB", "30"))
+FREE_FILE_SIZE_LIMIT_MB = int(os.getenv("FREE_FILE_SIZE_LIMIT_MB", "50"))
 PREMIUM_FILE_SIZE_LIMIT_MB = int(os.getenv("PREMIUM_FILE_SIZE_LIMIT_MB", "100"))
 FREE_EXPIRY_HOURS = int(os.getenv("FREE_EXPIRY_HOURS", "24"))
 
