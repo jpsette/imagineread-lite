@@ -13,15 +13,8 @@ interface FileUploaderProps {
     onUploadComplete: (result: UploadResult) => void
 }
 
-const FILE_TYPES = [
-    { ext: 'pdf', label: 'PDF', color: 'pdf' },
-    { ext: 'epub', label: 'EPUB', color: 'epub' },
-    { ext: 'cbz', label: 'CBZ', color: 'cbz' },
-    { ext: 'cbr', label: 'CBR', color: 'cbr' },
-]
-
-const ALLOWED_EXTENSIONS = FILE_TYPES.map(f => f.ext)
-const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
+const ALLOWED_EXTENSIONS = ['pdf', 'epub', 'cbz', 'cbr']
+const MAX_FILE_SIZE = 50 * 1024 * 1024
 
 export function FileUploader({ onUploadComplete }: FileUploaderProps) {
     const [isDragging, setIsDragging] = useState(false)
@@ -32,21 +25,17 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
 
     const validateFile = (file: File): string | null => {
         const extension = file.name.split('.').pop()?.toLowerCase()
-
         if (!extension || !ALLOWED_EXTENSIONS.includes(extension)) {
-            return `Tipo de arquivo não suportado. Use: ${ALLOWED_EXTENSIONS.join(', ').toUpperCase()}`
+            return `Formato não suportado`
         }
-
         if (file.size > MAX_FILE_SIZE) {
-            return `Arquivo muito grande. Máximo: 50MB`
+            return `Arquivo muito grande (máx. 50MB)`
         }
-
         return null
     }
 
     const uploadFile = async (file: File) => {
         setError(null)
-
         const validationError = validateFile(file)
         if (validationError) {
             setError(validationError)
@@ -60,7 +49,6 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
             const formData = new FormData()
             formData.append('file', file)
 
-            // Simulate progress for better UX
             const progressInterval = setInterval(() => {
                 setProgress(prev => Math.min(prev + 10, 90))
             }, 200)
@@ -79,13 +67,10 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
             }
 
             const result = await response.json()
-
-            setTimeout(() => {
-                onUploadComplete(result)
-            }, 500)
+            setTimeout(() => onUploadComplete(result), 400)
 
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Erro ao fazer upload')
+            setError(err instanceof Error ? err.message : 'Erro no upload')
             setIsUploading(false)
             setProgress(0)
         }
@@ -104,22 +89,15 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault()
         setIsDragging(false)
-
         const file = e.dataTransfer.files[0]
-        if (file) {
-            uploadFile(file)
-        }
+        if (file) uploadFile(file)
     }, [])
 
-    const handleClick = () => {
-        fileInputRef.current?.click()
-    }
+    const handleClick = () => fileInputRef.current?.click()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            uploadFile(file)
-        }
+        if (file) uploadFile(file)
     }
 
     return (
@@ -139,48 +117,35 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
                 onDrop={handleDrop}
                 onClick={handleClick}
             >
-                <span className="upload-icon">
-                    {isUploading ? '⏳' : '📤'}
-                </span>
+                <span className="upload-icon">{isUploading ? '⏳' : '↑'}</span>
 
                 <h2 className="upload-title">
-                    {isUploading ? 'Enviando arquivo...' : 'Arraste seu arquivo aqui'}
+                    {isUploading ? 'Enviando...' : 'Solte o arquivo aqui'}
                 </h2>
 
                 <p className="upload-subtitle">
-                    {isUploading ? 'Por favor, aguarde o upload completar' : 'ou clique para selecionar do seu dispositivo'}
+                    {isUploading ? 'Aguarde' : 'ou clique para selecionar'}
                 </p>
 
                 <div className="upload-formats">
-                    {FILE_TYPES.map(type => (
-                        <span key={type.ext} className={`format-badge ${type.color}`}>
-                            {type.label}
-                        </span>
+                    {ALLOWED_EXTENSIONS.map(ext => (
+                        <span key={ext} className="format-badge">{ext}</span>
                     ))}
                 </div>
 
-                <p className="upload-size-info">
-                    Suporta arquivos até 50MB
-                </p>
+                <p className="upload-size-info">Até 50MB</p>
             </div>
 
             {isUploading && (
                 <div className="progress-container">
                     <div className="progress-bar">
-                        <div
-                            className="progress-fill"
-                            style={{ width: `${progress}%` }}
-                        />
+                        <div className="progress-fill" style={{ width: `${progress}%` }} />
                     </div>
-                    <p className="progress-text">{progress}% completo</p>
+                    <p className="progress-text">{progress}%</p>
                 </div>
             )}
 
-            {error && (
-                <div className="error-message">
-                    ⚠️ {error}
-                </div>
-            )}
+            {error && <div className="error-message">⚠ {error}</div>}
         </div>
     )
 }
