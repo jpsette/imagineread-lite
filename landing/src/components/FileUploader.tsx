@@ -13,7 +13,14 @@ interface FileUploaderProps {
     onUploadComplete: (result: UploadResult) => void
 }
 
-const ALLOWED_EXTENSIONS = ['pdf', 'cbz', 'cbr', 'epub']
+const FILE_TYPES = [
+    { ext: 'pdf', label: 'PDF', color: 'pdf' },
+    { ext: 'epub', label: 'EPUB', color: 'epub' },
+    { ext: 'cbz', label: 'CBZ', color: 'cbz' },
+    { ext: 'cbr', label: 'CBR', color: 'cbr' },
+]
+
+const ALLOWED_EXTENSIONS = FILE_TYPES.map(f => f.ext)
 const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
 
 export function FileUploader({ onUploadComplete }: FileUploaderProps) {
@@ -132,21 +139,23 @@ export function FileUploader({ onUploadComplete }: FileUploaderProps) {
                 onDrop={handleDrop}
                 onClick={handleClick}
             >
-                <div className="upload-icon">
+                <span className="upload-icon">
                     {isUploading ? '⏳' : '📤'}
-                </div>
+                </span>
 
                 <h2 className="upload-title">
-                    {isUploading ? 'Enviando...' : 'Arraste seu arquivo aqui'}
+                    {isUploading ? 'Enviando arquivo...' : 'Arraste seu arquivo aqui'}
                 </h2>
 
                 <p className="upload-subtitle">
-                    {isUploading ? 'Por favor, aguarde' : 'ou clique para selecionar'}
+                    {isUploading ? 'Por favor, aguarde o upload completar' : 'ou clique para selecionar do seu dispositivo'}
                 </p>
 
                 <div className="upload-formats">
-                    {ALLOWED_EXTENSIONS.map(ext => (
-                        <span key={ext} className="format-badge">{ext}</span>
+                    {FILE_TYPES.map(type => (
+                        <span key={type.ext} className={`format-badge ${type.color}`}>
+                            {type.label}
+                        </span>
                     ))}
                 </div>
 
